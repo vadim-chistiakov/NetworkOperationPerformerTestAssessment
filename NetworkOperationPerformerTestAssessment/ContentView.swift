@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-
+    @State var id: CancelID? = CancelID()
     @StateObject var viewModel = ImageLoaderViewModel()
 
     var body: some View {
@@ -25,12 +25,33 @@ struct ContentView: View {
                     .resizable()
                     .frame(width: 100, height: 100)
             }
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
+                    .foregroundStyle(.red)
+            }
+
+            if id != nil {
+                Button("Cancel") {
+                    id = nil
+                }
+            } else {
+                Button("Restart") {
+                    id = CancelID()
+                }
+            }
         }
         .padding()
-        .task {
-            viewModel.loadImage()
+        .task(id: id) {
+            guard id != nil else {
+                print("Task not started")
+                return
+            }
+            print("Task started")
+            await viewModel.loadImage()
         }
     }
+
+    struct CancelID: Equatable {}
 }
 
 #Preview {

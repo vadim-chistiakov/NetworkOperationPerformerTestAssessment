@@ -48,37 +48,31 @@ final class ImageLoaderViewModel: ObservableObject {
         self.networkPerformer = networkPerformer
         self.networkService = networkService
     }
-    
-    deinit {
-        currentTask?.cancel()
-    }
-    
-    func loadImage(durationSeconds: TimeInterval = 5) {
-        currentTask?.cancel()
 
-        currentTask = Task {
-            do {
-                try await networkPerformer.performNetworkOperation(using: { [weak self] in
-                    guard let self else { return }
-                    do {
-                        try await updateDownloadedImage()
-                    } catch {
-                        await showErrorState(.somethingWentWrong)
-                    }
-                }, withinSeconds: durationSeconds)
-                
-                try await Task.sleep(seconds: durationSeconds)
-                showImageState()
-            } catch {
-                showErrorState(
-                    error is CancellationError ? .requestWasCancelled : .somethingWentWrong
-                )
-            }
+    func loadImage(durationSeconds: TimeInterval = 5) async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            try await networkPerformer.performNetworkOperation(using: { [weak self] in
+                guard let self else { return }
+                do {
+                    try await updateDownloadedImage()
+                } catch {
+                    await showErrorState(.somethingWentWrong)
+                }
+            }, withinSeconds: durationSeconds)
+
+            try await Task.sleep(seconds: durationSeconds)
+            showImageState()
+        } catch {
+            print(error)
+            showErrorState(
+                error is CancellationError ? .requestWasCancelled : .somethingWentWrong
+            )
         }
     }
 
     func cancelLoading() {
-        currentTask?.cancel()
         updateCancelState(.requestWasCancelled)
     }
     

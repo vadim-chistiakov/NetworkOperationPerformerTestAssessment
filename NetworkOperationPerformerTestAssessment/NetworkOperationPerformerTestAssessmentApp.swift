@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct NetworkOperationPerformerTestAssessmentApp: App {
+
+    @State var isContentOpened = false
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack {
+                Button("Open content") {
+                    isContentOpened = true
+                }
+                .navigationDestination(isPresented: $isContentOpened) {
+                    ContentView()
+                }
+            }
         }
     }
 }
