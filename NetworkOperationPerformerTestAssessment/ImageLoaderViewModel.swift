@@ -53,12 +53,11 @@ final class ImageLoaderViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            try await networkPerformer.performNetworkOperation(using: { [weak self] in
-                guard let self else { return }
+            try await networkPerformer.performNetworkOperation(using: {
                 do {
-                    try await updateDownloadedImage()
+                    try await self.updateDownloadedImage()
                 } catch {
-                    await showErrorState(.somethingWentWrong)
+                    await self.showErrorState(.somethingWentWrong)
                 }
             }, withinSeconds: durationSeconds)
 
