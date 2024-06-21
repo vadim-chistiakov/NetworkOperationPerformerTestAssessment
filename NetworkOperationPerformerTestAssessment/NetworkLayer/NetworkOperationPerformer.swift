@@ -9,7 +9,7 @@ import Foundation
 import Network
 
 final class NetworkOperationPerformer: Sendable {
-
+    
     private let networkMonitor: NetworkMonitor
 
     init(networkMonitor: NetworkMonitor = NetworkMonitor()) {
@@ -45,8 +45,7 @@ final class NetworkOperationPerformer: Sendable {
         }
         let networkChangeTask = Task { [weak self] in
             guard let self = self else { return }
-            await self.networkMonitor.startMonitoringIfRequired()
-            for await isConnected in await self.networkMonitor.addNetworkStatusChangeObserver() {
+            for await isConnected in await networkMonitor.addNetworkStatusChangeObserver() {
                 if !Task.isCancelled, isConnected {
                     await closure()
                     timeoutTask.cancel()

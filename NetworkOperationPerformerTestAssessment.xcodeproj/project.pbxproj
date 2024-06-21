@@ -16,6 +16,7 @@
 		AE4CB2382C22199F00EC3DE0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE4CB2372C22199F00EC3DE0 /* ContentView.swift */; };
 		AE4CB23A2C2219A100EC3DE0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE4CB2392C2219A100EC3DE0 /* Assets.xcassets */; };
 		AE4CB23D2C2219A100EC3DE0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE4CB23C2C2219A100EC3DE0 /* Preview Assets.xcassets */; };
+		AE8895432C2582880028DC10 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8895422C2582880028DC10 /* ResultView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		AE4CB2372C22199F00EC3DE0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AE4CB2392C2219A100EC3DE0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AE4CB23C2C2219A100EC3DE0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		AE8895422C2582880028DC10 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,9 +74,9 @@
 		AE4CB2342C22199F00EC3DE0 /* NetworkOperationPerformerTestAssessment */ = {
 			isa = PBXGroup;
 			children = (
+				AE8895412C2578000028DC10 /* Views */,
 				23048FDC2C252F8300768A06 /* NetworkLayer */,
 				AE4CB2352C22199F00EC3DE0 /* NetworkOperationPerformerTestAssessmentApp.swift */,
-				AE4CB2372C22199F00EC3DE0 /* ContentView.swift */,
 				23048FD52C252F6F00768A06 /* ImageLoaderViewModel.swift */,
 				AE4CB2392C2219A100EC3DE0 /* Assets.xcassets */,
 				AE4CB23B2C2219A100EC3DE0 /* Preview Content */,
@@ -88,6 +90,15 @@
 				AE4CB23C2C2219A100EC3DE0 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		AE8895412C2578000028DC10 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AE4CB2372C22199F00EC3DE0 /* ContentView.swift */,
+				AE8895422C2582880028DC10 /* ResultView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -166,6 +177,7 @@
 				AE4CB2382C22199F00EC3DE0 /* ContentView.swift in Sources */,
 				23048FDE2C252F8300768A06 /* NetworkOperationPerformer.swift in Sources */,
 				23048FDF2C252F8300768A06 /* NetworkService.swift in Sources */,
+				AE8895432C2582880028DC10 /* ResultView.swift in Sources */,
 				AE4CB2362C22199F00EC3DE0 /* NetworkOperationPerformerTestAssessmentApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,10 +309,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NetworkOperationPerformerTestAssessment/Preview Content\"";
-				DEVELOPMENT_TEAM = LWA242J8PQ;
+				DEVELOPMENT_TEAM = 37QDW9VYR6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -315,6 +328,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = UnknownID.NetworkOperationPerformerTestAssessment;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
@@ -327,10 +341,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"NetworkOperationPerformerTestAssessment/Preview Content\"";
-				DEVELOPMENT_TEAM = LWA242J8PQ;
+				DEVELOPMENT_TEAM = 37QDW9VYR6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -345,6 +360,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = UnknownID.NetworkOperationPerformerTestAssessment;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;

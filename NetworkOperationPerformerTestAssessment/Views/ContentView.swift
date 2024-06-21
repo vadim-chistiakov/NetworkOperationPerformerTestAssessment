@@ -6,32 +6,63 @@
 //
 
 import SwiftUI
-import Combine
 
 struct ContentView: View {
-    @StateObject private var viewModel = ImageLoaderViewModel()
+    @State var taskId: CancelID? = CancelID()
+    @State private var navigationPath = NavigationPath()
+    @StateObject var viewModel = ImageLoaderViewModel()
+    
+    struct CancelID: Equatable {}
 
     var body: some View {
-        Group {
-            if viewModel.isLoading {
-                LoadingView(cancelAction: viewModel.cancelLoading)
-            } else {
-                if let image = viewModel.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+        NavigationStack(path: $navigationPath) {
+            VStack {
+                if let networkMessage = viewModel.networkMessage {
+                    Text(networkMessage)
+                        .foregroundStyle(.red)
+                        .bold()
+                }
+                if viewModel.isLoading {
+                    ProgressView()
+                    Spacer()
+                    Button("Cancel") {
+                        taskId = nil
+                    }
                 } else {
-                    ErrorView(errorMessage: $viewModel.errorMessage)
+                    EmptyView()
                 }
             }
-        }
-        .onAppear {
-            viewModel.loadImage()
-        }
-        .onDisappear {
-            viewModel.cancelLoading()
+            .onChange(of: viewModel.isLoading) { _, isLoading in
+                if !isLoading {
+                    navigationPath.append("ResultView")
+                }
+            }
+            .navigationTitle("Loading screen")
+            .navigationDestination(for: String.self) { destination in
+                if destination == "ResultView" {
+                    ResultView(viewModel: viewModel)
+                }
+            }
+            .padding()
+            .onAppear {
+                taskId = CancelID()
+            }
+            .task {
+                print("Check internet connetion")
+                viewModel.monitorInternetConnection()
+            }
+            .task(id: taskId) {
+                guard taskId != nil else {
+                    print("Task not started")
+                    return
+                }
+                print("Task started")
+                await viewModel.loadImage()
+            }
+            .background(Color(.systemBackground))
         }
     }
+
 }
 
 #Preview {

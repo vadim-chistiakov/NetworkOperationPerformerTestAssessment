@@ -20,9 +20,15 @@ actor NetworkMonitor {
     
     func addNetworkStatusChangeObserver() -> AsyncStream<Bool> {
         AsyncStream { continuation in
-            monitor.pathUpdateHandler = { path in
-                continuation.yield(path.status == .satisfied)
+            monitor.pathUpdateHandler = { [weak self] path in
+                guard let self else { return }
+                let isConnected = path.status == .satisfied
+                continuation.yield(isConnected)
+                Task {
+                    await self.updateStatus(isConnected)
+                }
             }
+            monitor.start(queue: DispatchQueue(label: "NetworkMonitor"))
         }
     }
     
@@ -30,21 +36,10 @@ actor NetworkMonitor {
         isConnected
     }
 
-    func startMonitoringIfRequired() {
-        guard !isStarted else { return }
-        monitor.pathUpdateHandler = { [weak self] path in
-            guard let self else { return }
-            Task {
-                await self.updateStatus(path: path)
-            }
-        }
-        monitor.start(queue: DispatchQueue(label: "NetworkMonitor"))
-    }
-
     // MARK: - Private methods
 
-    private func updateStatus(path: NWPath) {
-        isConnected = path.status == .satisfied
+    private func updateStatus(_ isConnected: Bool) {
+        self.isConnected = isConnected
     }
     
 }

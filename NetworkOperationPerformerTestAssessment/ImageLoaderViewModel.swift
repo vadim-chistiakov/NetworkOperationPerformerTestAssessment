@@ -33,23 +33,39 @@ final class ImageLoaderViewModel: ObservableObject {
     
     @Published var isLoading = true
     @Published var errorMessage: String?
+    @Published var networkMessage: String?
     @Published var image: Image? = nil
 
     private let networkPerformer: NetworkOperationPerformer
+    private let networkMonitor: NetworkMonitor
     private let networkService: NetworkService
     
-    private var currentTask: Task<Void, Never>?
     private var downloadedImage: Image?
     
     init(
         networkPerformer: NetworkOperationPerformer = .init(),
+        networkMonitor: NetworkMonitor = .init(),
         networkService: NetworkService = NetworkServiceImpl()
     ) {
         self.networkPerformer = networkPerformer
+        self.networkMonitor = networkMonitor
         self.networkService = networkService
     }
+    
+    func monitorInternetConnection(with delay: TimeInterval = 0.5) {
+        Task {
+            do {
+                try await Task.sleep(seconds: delay)
+                for await isConnected in await networkMonitor.addNetworkStatusChangeObserver() {
+                    networkMessage = !isConnected ? "No internet connection" : nil
+                }
+            } catch {
+                print(error)
+            }
+        }
+    }
 
-    func loadImage(durationSeconds: TimeInterval = 5) async {
+    func loadImage(durationSeconds: TimeInterval = 15) async {
         isLoading = true
         errorMessage = nil
         do {
@@ -70,10 +86,6 @@ final class ImageLoaderViewModel: ObservableObject {
             )
         }
     }
-
-    func cancelLoading() {
-        updateCancelState(.requestWasCancelled)
-    }
     
     // MARK: - Private methods
 
@@ -86,11 +98,6 @@ final class ImageLoaderViewModel: ObservableObject {
             throw NetworkError.urlIsInvalid
         }
         return try await networkService.fetchImage(from: url)
-    }
-
-    private func updateCancelState(_ error: NetworkError) {
-        self.isLoading = false
-        self.errorMessage = error.message
     }
 
     private func showImageState() {
