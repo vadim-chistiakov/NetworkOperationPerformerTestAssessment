@@ -28,6 +28,7 @@ enum NetworkError: Error {
     }
 }
 
+@MainActor
 final class ImageLoaderViewModel: ObservableObject {
     
     @Published var isLoading = true
@@ -60,23 +61,22 @@ final class ImageLoaderViewModel: ObservableObject {
                 try await networkPerformer.performNetworkOperation(using: { [weak self] in
                     guard let self else { return }
                     do {
-                        downloadedImage = try await downloadImage()
+                        try await updateDownloadedImage()
                     } catch {
                         await showErrorState(.somethingWentWrong)
                     }
                 }, withinSeconds: durationSeconds)
                 
                 try await Task.sleep(seconds: durationSeconds)
-                await showImageState()
+                showImageState()
             } catch {
-                await showErrorState(
+                showErrorState(
                     error is CancellationError ? .requestWasCancelled : .somethingWentWrong
                 )
             }
         }
     }
-    
-    @MainActor 
+
     func cancelLoading() {
         currentTask?.cancel()
         updateCancelState(.requestWasCancelled)
@@ -84,31 +84,30 @@ final class ImageLoaderViewModel: ObservableObject {
     
     // MARK: - Private methods
 
-    @MainActor
+    private func updateDownloadedImage() async throws {
+        downloadedImage = try await downloadImage()
+    }
+
     private func downloadImage() async throws -> Image {
         guard let url = urlExample else {
             throw NetworkError.urlIsInvalid
         }
         return try await networkService.fetchImage(from: url)
     }
-    
-    @MainActor
+
     private func updateCancelState(_ error: NetworkError) {
         self.isLoading = false
         self.errorMessage = error.message
     }
-    
-    @MainActor
+
     private func showImageState() {
         image = downloadedImage
         errorMessage = image == nil ? NetworkError.somethingWentWrong.message : nil
         isLoading = false
     }
 
-    @MainActor
     private func showErrorState(_ error: NetworkError) {
         self.errorMessage = error.message
         isLoading = false
     }
-
 }

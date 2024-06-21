@@ -8,8 +8,8 @@
 import Foundation
 import Network
 
-final class NetworkOperationPerformer {
-    
+final class NetworkOperationPerformer: Sendable {
+
     private let networkMonitor: NetworkMonitor
 
     init(networkMonitor: NetworkMonitor = NetworkMonitor()) {
@@ -24,7 +24,7 @@ final class NetworkOperationPerformer {
     ///   - closure: An asynchronous closure representing the network operation to be performed.
     ///   - withinSeconds: A `TimeInterval` specifying the time limit in seconds within which the operation should complete.
     func performNetworkOperation(
-        using closure: @escaping () async -> Void,
+        using closure: @escaping @Sendable () async -> Void,
         withinSeconds timeoutDuration: TimeInterval
     ) async throws {
         if await networkMonitor.hasInternetConnection() {
@@ -37,7 +37,7 @@ final class NetworkOperationPerformer {
     // MARK: - Private method
 
     private func tryPerformingNetworkOperation(
-        using closure: @escaping () async -> Void,
+        using closure: @escaping @Sendable () async -> Void,
         withinSeconds timeoutDuration: TimeInterval
     ) async throws {
         let timeoutTask = Task {
@@ -45,6 +45,7 @@ final class NetworkOperationPerformer {
         }
         let networkChangeTask = Task { [weak self] in
             guard let self = self else { return }
+            await self.networkMonitor.startMonitoringIfRequired()
             for await isConnected in await self.networkMonitor.addNetworkStatusChangeObserver() {
                 if !Task.isCancelled, isConnected {
                     await closure()
