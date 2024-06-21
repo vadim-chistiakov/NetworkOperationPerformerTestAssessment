@@ -12,11 +12,10 @@ actor NetworkMonitor {
     
     private let monitor: NWPathMonitor
     private var isConnected = false
+    private var isStarted = false
 
     init(monitor: NWPathMonitor = .init())  {
         self.monitor = monitor
-        // TODO: - Actor-isolated instance method 'startMonitoring()' can not be referenced from a non-isolated context; this is an error in Swift 6
-        startMonitoring()
     }
     
     func addNetworkStatusChangeObserver() -> AsyncStream<Bool> {
@@ -30,10 +29,9 @@ actor NetworkMonitor {
     func hasInternetConnection() -> Bool {
         isConnected
     }
-    
-    // MARK: - Private methods
-    
-    private func startMonitoring() {
+
+    func startMonitoringIfRequired() {
+        guard !isStarted else { return }
         monitor.pathUpdateHandler = { [weak self] path in
             guard let self else { return }
             Task {
@@ -42,7 +40,9 @@ actor NetworkMonitor {
         }
         monitor.start(queue: DispatchQueue(label: "NetworkMonitor"))
     }
-    
+
+    // MARK: - Private methods
+
     private func updateStatus(path: NWPath) {
         isConnected = path.status == .satisfied
     }

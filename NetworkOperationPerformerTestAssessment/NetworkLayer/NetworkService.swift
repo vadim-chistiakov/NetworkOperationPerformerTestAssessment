@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-protocol NetworkService {
+protocol NetworkService: Sendable {
     func fetchImage(from url: URL) async throws -> Image
 }
 
