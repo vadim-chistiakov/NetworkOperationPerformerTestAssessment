@@ -8,14 +8,7 @@
 import Foundation
 import Network
 
-final class NetworkOperationPerformer: Sendable {
-    
-    private let networkMonitor: NetworkMonitor
-
-    init(networkMonitor: NetworkMonitor = NetworkMonitor()) {
-        self.networkMonitor = networkMonitor
-    }
-    
+protocol NetworkOperationPerformer {
     /// Executes a given asynchronous network operation and ensures it completes within a specified time limit.
     ///
     /// This method runs the provided network operation in a new task, allowing it to be canceled if needed.
@@ -23,6 +16,20 @@ final class NetworkOperationPerformer: Sendable {
     /// - Parameters:
     ///   - closure: An asynchronous closure representing the network operation to be performed.
     ///   - withinSeconds: A `TimeInterval` specifying the time limit in seconds within which the operation should complete.
+    func performNetworkOperation(
+        using closure: @escaping @Sendable () async -> Void,
+        withinSeconds timeoutDuration: TimeInterval
+    ) async throws
+}
+
+final class NetworkOperationPerformerImpl: NetworkOperationPerformer, Sendable {
+    
+    private let networkMonitor: NetworkMonitor
+
+    init(networkMonitor: NetworkMonitor = NetworkMonitor()) {
+        self.networkMonitor = networkMonitor
+    }
+    
     func performNetworkOperation(
         using closure: @escaping @Sendable () async -> Void,
         withinSeconds timeoutDuration: TimeInterval

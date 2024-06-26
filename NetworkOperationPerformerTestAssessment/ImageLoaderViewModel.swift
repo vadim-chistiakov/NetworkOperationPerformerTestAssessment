@@ -43,7 +43,7 @@ final class ImageLoaderViewModel: ObservableObject {
     private var downloadedImage: Image?
     
     init(
-        networkPerformer: NetworkOperationPerformer = .init(),
+        networkPerformer: NetworkOperationPerformer = NetworkOperationPerformerImpl(),
         networkMonitor: NetworkMonitor = .init(),
         networkService: NetworkService = NetworkServiceImpl()
     ) {
